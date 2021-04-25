@@ -23,7 +23,10 @@ public class TVContext {
             c.setIndex(i);
             c.setName("频道" + i);
             String[] temp = new String[1];
-            temp[0] = "file:///mnt/sdcard/test1.mp4";
+            temp[0] = "file:///mnt/sdcard/test.mp4";
+            if (i == 0) {
+                //temp[0] = "http://gs.moli01.lunbocl.ott.cibntv.net/hls/vCIBNHYPD/1800/vCIBNHYPD.m3u8?k=939D28D143F04FD1A0BA820F3CAEDCD8&channel=xlmediawatch&t=1498043311&ttl=86400&clms_sessid=hlsvCIBNHYPD1800vCIBNHYPD724fd62f1749aa95286acb2695c90cbc";
+            }
             c.setUrls(temp);
             channelInfoList.add(c);
             channelInfoMap.put(i,c);

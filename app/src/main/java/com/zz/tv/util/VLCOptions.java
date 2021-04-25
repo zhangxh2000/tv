@@ -76,7 +76,7 @@ public class VLCOptions {
 
         int networkCaching = pref.getInt("network_caching_value", 0);
         //network
-        networkCaching = 5000;//700 is ok but not stable
+        networkCaching = 0;//700 is ok but not stable
         /* CPU intensive plugin, setting for slow devices */
         options.add(timeStreching ? "--audio-time-stretch" : "--no-audio-time-stretch");
         options.add("--avcodec-skiploopfilter");
@@ -152,8 +152,8 @@ public class VLCOptions {
         boolean noHardwareAcceleration = (flags & MEDIA_NO_HWACCEL) != 0;
         boolean noVideo = (flags & MEDIA_VIDEO) == 0;
         final boolean paused = (flags & MEDIA_PAUSED) != 0;
-        //int hardwareAcceleration = HW_ACCELERATION_DISABLED;
-        int hardwareAcceleration = HW_ACCELERATION_FULL;
+        int hardwareAcceleration = HW_ACCELERATION_DISABLED;
+        //int hardwareAcceleration = HW_ACCELERATION_FULL;
         //int hardwareAcceleration = HW_ACCELERATION_AUTOMATIC;
 //        if (!noHardwareAcceleration) {
 //            try {

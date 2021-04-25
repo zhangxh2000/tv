@@ -2,15 +2,13 @@ package com.zz.tv.controller;
 
 import android.os.Handler;
 import android.view.KeyEvent;
-
 import com.zz.tv.data.ChannelInfo;
 import com.zz.tv.data.TVContext;
-import com.zz.tv.ui.PFCallback;
+import com.zz.tv.ui.UICallback;
 import com.zz.tv.ui.TVListViewCallback;
 import com.zz.tv.ui.VideoViewVLC;
 
-import org.videolan.libvlc.MediaPlayer;
-import org.videolan.libvlc.media.VideoView;
+import java.util.List;
 
 /**
  * Created by zhangxiaohui on 2017/6/2.
@@ -20,29 +18,47 @@ public class TVController {
 
     //private VideoViewVLC videoViewVLC;
     private TVContext tvContext;
-    private PFCallback pfCallback;
+    private UICallback uiCallback;
     private TVListViewCallback tvListViewCallback;
     private Handler uiHandler;
     private static final int SWITCH_INTERVAL = 300;
     private PlayController playController;
-
+    private DataLoader dataLoader;
     public TVController(VideoViewVLC videoView) {
         tvContext = new TVContext();
         playController = new PlayController(videoView);
         uiHandler = new Handler();
-    }
-
-    public void test() {
-//        playController.stop();
-//        String[] urls = new String[1];
-//        urls[0] = "file:///mnt/sdcard/test1.mp4";
-//        playController.play(urls);
-        playPreChannel();
+        initData();
     }
 
 
-    public void setPfCallback(PFCallback pfCallback) {
-        this.pfCallback = pfCallback;
+    private void initData() {
+
+        DataLoader dataLoader = new DataLoader();
+        dataLoader.loadChannelList(new DataLoader.LoadListener() {
+            @Override
+            public void onSuccess(List<ChannelInfo> list) {
+                uiCallback.dismissLoading();
+                uiCallback.updateChannelList(list);
+            }
+
+            @Override
+            public void onFailed() {
+                uiCallback.showError("获取频道列表失败！");
+            }
+        });
+    }
+
+    public void test(String url) {
+        //playChannel(tvContext.getDefaultChannel());
+        String[] temp = new String[1];
+        temp[0] = url;
+        playController.play(temp);
+    }
+
+
+    public void setUiCallback(UICallback uiCallback) {
+        this.uiCallback = uiCallback;
     }
 
     public void setTvListViewCallback(TVListViewCallback tvListViewCallback) {
@@ -50,11 +66,7 @@ public class TVController {
     }
 
     public void enterTV() {
-//        //TODO play default channel
-//        String[] urls = new String[1];
-//        urls[0] = "file:///mnt/sdcard/test.mp4";
-//        playController.play(urls);
-        playChannel(tvContext.getDefaultChannel());
+        //playChannel(tvContext.getDefaultChannel());
     }
 
     public void exitTV() {
@@ -86,7 +98,7 @@ public class TVController {
 
     private void playPreChannel() {
         ChannelInfo ch = tvContext.getPreChannel();
-        pfCallback.updatePf(ch);
+        uiCallback.updatePf(ch);
         tvContext.setTargetChannel(ch);
         uiHandler.removeCallbacks(switchChannelRunnable);
         uiHandler.postDelayed(switchChannelRunnable, SWITCH_INTERVAL);
@@ -94,7 +106,7 @@ public class TVController {
 
     private void playNextChannel() {
         ChannelInfo ch = tvContext.getNextChannel();
-        pfCallback.updatePf(ch);
+        uiCallback.updatePf(ch);
         tvContext.setTargetChannel(ch);
         uiHandler.removeCallbacks(switchChannelRunnable);
         uiHandler.postDelayed(switchChannelRunnable, SWITCH_INTERVAL);
